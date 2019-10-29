@@ -28,10 +28,7 @@ services:
         volumes:
           - type: bind
             source: ./logstash.conf
-            target: /usr/share/elasticsearch/config/logstash.conf
-        ports:
-          - "5000:5000"
-          - "9600:9600"
+            target: /usr/share/logstash/config/logstash.conf
         environment:
           LS_JAVA_OPTS: "-Xmx256m -Xms256m"
         networks:
@@ -39,8 +36,6 @@ services:
         depends_on:
           - elasticsearch
           
-     
-
 networks:
   docker-elk:
     driver: bridge
