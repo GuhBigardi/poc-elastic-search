@@ -1,0 +1,46 @@
+version: '3.2'
+services:
+     elasticsearch:
+       image: docker.elastic.co/elasticsearch/elasticsearch:7.4.1
+       container_name: elasticsearch
+       environment:
+          - discovery.type=single-node
+       ports:
+          - 9200:9200
+          - 9300:9300
+       networks:
+          - docker-elk
+
+     kibana:
+       image: docker.elastic.co/kibana/kibana:7.4.1
+       container_name: kibana
+       environment:
+          - SERVER_NAME=localhost
+          - ELASTICSEARCH_URL=http://elasticsearch:9200/
+       ports:
+          - 5601:5601
+       networks:
+          - docker-elk
+
+     logstash:
+        image: docker.elastic.co/logstash/logstash:7.4.1
+        container_name: logstash
+        volumes:
+          - type: bind
+            source: ./logstash.conf
+            target: /usr/share/elasticsearch/config/logstash.conf
+        ports:
+          - "5000:5000"
+          - "9600:9600"
+        environment:
+          LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+        networks:
+          - docker-elk
+        depends_on:
+          - elasticsearch
+          
+     
+
+networks:
+  docker-elk:
+    driver: bridge
